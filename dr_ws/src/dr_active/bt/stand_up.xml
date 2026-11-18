@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<!-- StandUp 子树：后腿站立抬升视点 ~40 cm（遮挡严重时，耗稳定裕度） -->
+<root>
+  <BehaviorTree ID="StandUp">
+    <StandUp height_gain_m="0.4" max_duration_s="3.0" />
+  </BehaviorTree>
+</root>

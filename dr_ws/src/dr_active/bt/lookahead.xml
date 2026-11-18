@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<!-- LookAhead 子树：行进中对准预测节点方位（零代价视点引导，C1） -->
+<root>
+  <BehaviorTree ID="LookAhead">
+    <LookAhead distance_m="10.0" pan_speed="0.5" />
+  </BehaviorTree>
+</root>

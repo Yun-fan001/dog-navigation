@@ -1,0 +1,31 @@
+name: python-tests
+
+on:
+  push:
+    branches: [main, dev, 'feature/**']
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ["3.10", "3.12"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Generate protobuf bindings
+        shell: bash
+        run: python -m grpc_tools.protoc -I dr_ws/src/dr_msgs/proto --python_out dr_ws/src/dr_msgs/python/dr_msgs node_map.proto
+
+      - name: Run tests
+        run: python -m pytest

@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.coverage
+
+# ROS / catkin / colcon
+build/
+devel/
+install/
+logs/
+
+# IDE
+.vscode/
+.idea/
+
+# 数据与模型产物（大文件不入库，用脚本/文档说明来源）
+data/
+*.bag
+*.onnx
+*.engine
+*.pt
+*.pth
+*.tif
+*.tiff
+*.geojson
+
+# 仿真产物
+dr_ws/src/dr_sim/models/*/
+!dr_ws/src/dr_sim/models/.gitkeep
+
+# protobuf 生成物（由 CI/脚本重新生成）
+dr_ws/src/dr_msgs/python/dr_msgs/*_pb2*.py
+!dr_ws/src/dr_msgs/python/dr_msgs/__init__.py

@@ -1,0 +1,11 @@
+# dog-navigation Python 开发依赖（Windows 算法开发 / CI 通用）
+numpy>=1.24
+scipy>=1.10
+networkx>=3.0
+scikit-image>=0.21
+protobuf>=4.21
+grpcio-tools>=1.56
+pytest>=7.4
+pyyaml>=6.0
+# A1 影像预处理（GeoTIFF 读写/重投影；Windows 有官方 wheel）
+rasterio>=1.3

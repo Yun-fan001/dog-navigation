@@ -1,0 +1,22 @@
+# dr_perception 参数（待 Ubuntu 环境冻结，v0.1 草案）
+# A6 关键帧触发
+keyframe:
+  dist_m: 2.0          # 位移 2 m 触发一次分割
+  yaw_deg: 15.0        # 或转向 15° 触发
+  image_size: [512, 512]
+
+# A7 局部高程图（grid_map）
+elevation:
+  resolution_m: 0.05   # 5 cm
+  window_m: 50.0       # 50×50 m 滑窗
+  signature_radius_m: 20.0
+  hist_bins: 16
+
+# A8 节点检测
+node_detection:
+  cluster_eps_m: 3.0   # DBSCAN eps（与离线层 A3 一致）
+  branch_degree_threshold: 2   # 度≠2 判定
+
+# A9 局部队列
+local_queue:
+  max_nodes: 8         # 滑动窗口（计划书 3–8 个节点）

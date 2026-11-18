@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<!-- Detour 子树：next-best-node 路径微调（C2/C3，≤15 m 绕行，临时 waypoint） -->
+<root>
+  <BehaviorTree ID="Detour">
+    <Detour max_detour_m="15.0" alpha="1.0" check_period_s="5.0" />
+  </BehaviorTree>
+</root>

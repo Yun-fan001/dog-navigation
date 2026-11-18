@@ -1,0 +1,55 @@
+// node_map.proto — 全局节点目录 schema（计划书 §3.1 / A5）
+// 离线层导出、机载层出发前加载。接口冻结（docs/interfaces.md）。
+syntax = "proto3";
+
+package dr_msgs;
+
+// 节点类别按灾后稳定性排序（计划书 §3.1 表）：
+// 道路网拓扑顶点/地形特征为 ★★★，水域/硬质场地 ★★，幸存建筑 ★（仅辅助）。
+enum NodeClass {
+  NODE_CLASS_UNKNOWN = 0;
+  NODE_CLASS_ROAD_JUNCTION = 1;    // 道路网拓扑顶点（交叉口/急弯/断头路端点）
+  NODE_CLASS_TERRAIN_FEATURE = 2;  // 地形特征（山脊/鞍部/冲沟，来自 DEM）
+  NODE_CLASS_WATER_EDGE = 3;       // 水域/河岸线拐点
+  NODE_CLASS_HARD_GROUND = 4;      // 大型硬质场地（操场/停车场角点）
+  NODE_CLASS_SURVIVING_BUILDING = 5; // 幸存建筑角点（需损毁评估过滤，仅辅助）
+}
+
+// 节点复合描述子（计划书 §3.1 SemanticNode 结构体）
+message SemanticNode {
+  int32 id = 1;
+  NodeClass cls = 2;
+  double conf = 3;                  // 提取置信度 [0,1]
+
+  // —— 几何签名 ——
+  double pos_x = 4;                 // 全局系（离线侧）或局部队列系（机载侧）
+  double pos_y = 5;
+  double yaw_hint = 6;              // 方向性提示（rad）；无方向时 NaN
+
+  // —— 2.5D 高程签名 ——
+  repeated float elev_hist = 7;     // 以节点为中心 20 m 邻域高程直方图（16 bin）
+  float roughness = 8;              // 邻域地形粗糙度（高程标准差，m）
+
+  // —— 拓扑签名 ——
+  uint32 degree = 9;                // 图上度（交叉口=3/4）
+  repeated float edge_angles = 10;  // 出边相对方位（rad，排序归一化 → 旋转不变）
+}
+
+message GraphEdge {
+  int32 src = 1;
+  int32 dst = 2;
+  double length = 3;                // 边长（m，离线侧=图上距离；机载侧=LIO 相对位姿）
+  double dtheta = 4;                // 转角（rad）
+}
+
+// 节点目录：全部字段 + 版本与时间戳（A5 验收）
+message NodeMap {
+  string version = 1;               // 目录格式版本
+  uint64 timestamp = 2;             // 生成时间（unix 秒）
+  string projection = 3;            // 投影说明（如 "EPSG:32650 / ENU anchored at origin"）
+  double origin_x = 4;              // 影像左上角锚点在投影系下的坐标（计划书 §2.2 全局系 G）
+  double origin_y = 5;
+  double gsd = 6;                   // 影像地面采样距离（m/px），如 0.3
+  repeated SemanticNode nodes = 7;
+  repeated GraphEdge edges = 8;
+}

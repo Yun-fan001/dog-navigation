@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<!-- StopAndScan 子树：原地 360° 扫视聚合分割结果（C1 原语，~6 s） -->
+<root>
+  <BehaviorTree ID="StopAndScan">
+    <StopAndScan yaw_step_deg="15.0" scan_time_s="6.0" />
+  </BehaviorTree>
+</root>

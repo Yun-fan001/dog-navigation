@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+  DogNavigationRoot —— 主动感知行为树根（计划书 §5.1，创新点 C）
+  自定义节点由 dr_active C++ 插件实现（Ubuntu + BehaviorTree.CPP v4）：
+    LookAhead     : 距预测节点 <10 m 时机身转向/抬头对准预测节点方位（~0 s）
+    CheckConfidence: 当前匹配置信度是否低于阈值（读取 dr_fusion /align_event）
+    StopAndScan   : 原地 360° 扫视（机身自旋），多视角聚合分割结果（~6 s）
+    StandUp       : 后腿站立抬升视点 ~40 cm，扩大可视域（~3 s，耗稳定裕度）
+    Detour        : next-best-node 收益为正时路径微调（≤15 m 绕行）
+  评分函数（C2）：score(i) = α·ΔI(i)/(1+cost(i))，ΔI = 未匹配节点数 × P(可确认) × 属性独特度
+  接口：/behavior_cmd（waypoint 微调/扫视指令）→ dddmr 规划器/控制器
+-->
+<root main_tree_to_execute="DogNavigationRoot">
+  <BehaviorTree ID="DogNavigationRoot">
+    <Sequence>
+      <!-- 行进中主动对准预测节点（零代价） -->
+      <LookAhead distance_m="10.0" pan_speed="0.5" />
+      <!-- 匹配置信度低 → 触发扫视/站立；否则跳过（不阻塞导航） -->
+      <Fallback>
+        <ReactiveSequence>
+          <CheckConfidence min_score="0.5" topic="/align_event" />
+          <StopAndScan yaw_step_deg="15.0" scan_time_s="6.0" />
+          <StandUp height_gain_m="0.4" max_duration_s="3.0" />
+        </ReactiveSequence>
+        <Skip/>
+      </Fallback>
+      <!-- next-best-node 路径微调（C1–C3，Detour 以临时 waypoint 注入全局规划） -->
+      <Detour max_detour_m="15.0" alpha="1.0" check_period_s="5.0" />
+    </Sequence>
+  </BehaviorTree>
+</root>
